@@ -34,3 +34,4 @@ override.tf.json
 terraform.rc
 *.pem
 *.ppk
+ansible/vars/default.yml

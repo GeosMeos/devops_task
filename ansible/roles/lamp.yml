@@ -5,5 +5,14 @@
   become_user: root
   gather_facts: true
 
-- name: Include Apache
-  import_playbook: apache.yaml
+- name: Include Apache2
+  import_playbook: apache.yml
+
+- name: Include PHP
+  import_playbook: php.yml
+
+- name: Include MySQL
+  import_playbook: mysql.yml
+
+- name: Include WordPress
+  import_playbook: wordpress.yml

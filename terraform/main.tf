@@ -112,7 +112,7 @@ resource "aws_route_table_association" "private" {
 
 // Security groups
 resource "aws_security_group" "ssh-access" {
-  name        = "${var.environment}-sg"
+  name        = "${var.environment}-sg-ssh"
   description = "SSH (port 22) access"
   vpc_id      = aws_vpc.vpc.id
   depends_on  = [aws_vpc.vpc]
@@ -137,7 +137,7 @@ resource "aws_security_group" "ssh-access" {
 
 // Security groups
 resource "aws_security_group" "web-access" {
-  name        = "${var.environment}-sg"
+  name        = "${var.environment}-sg-web"
   description = "web (port 80) access"
   vpc_id      = aws_vpc.vpc.id
   depends_on  = [aws_vpc.vpc]

@@ -1,0 +1,12 @@
+- name: install apache2
+  remote_user: ubuntu
+  hosts: lampstack
+  become: True
+  become_user: root
+  gather_facts: True
+  tasks:
+    - name: "Install apache2"
+      package: name=apache2 state=present
+
+    - name: "Install libapache2-mod-php7.4"
+      package: name=libapache2-mod-php state=present

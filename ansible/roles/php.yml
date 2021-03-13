@@ -1,0 +1,42 @@
+- name: install php
+  remote_user: ubuntu
+  hosts: lampstack
+  become: true
+  become_user: root
+  gather_facts: true
+  tasks:
+    - name: Add repository for PHP versions (Ubuntu).
+      apt_repository: repo='ppa:ondrej/php'
+      
+    - name: "Install php7.4"
+      package: name=php7.4-common state=present
+
+    - name: "Install php7.4-mysql"
+      package: name=php7.4-mysql state=present
+
+    - name: "Install php7.4-curl"
+      package: name=php7.4-curl state=present
+
+    - name: "Install php7.4-json"
+      package: name=php7.4-json state=present
+
+    - name: "Install php7.4-mbstring"
+      package: name=php7.4-mbstring state=present
+
+    - name: "Install php7.4-xml"
+      package: name=php7.4-xml state=present
+
+    - name: Install php7.4-zip"
+      package: name=php7.4-zip state=present
+
+    - name: "Install php7.4-gd"
+      package: name=php7.4-gd state=present
+
+    - name: "Install php7.4-soap"
+      package: name=php7.4-soap state=present
+
+    - name: "Install php7.4-ssh2"
+      package: name=php7.4-ssh2 state=present
+
+    - name: "Install php7.4-tokenizer"
+      package: name=php7.4-tokenizer state=present  
