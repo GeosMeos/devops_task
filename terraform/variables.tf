@@ -35,3 +35,7 @@ variable "instance_type" {
 variable "key_name" {
   description = "The key-pair to use for ssh"
 }
+
+variable "key_path" {
+  description = "The key-pair to use for ssh"
+}

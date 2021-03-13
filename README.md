@@ -39,9 +39,11 @@ tf infrastructure - OK
 
 tf lamp - OK
 
-tf winserver2019 -
+tf winserver2019 - OK
 
-anisble lamp
+anisble lamp - 
+
+ansible winserver2019
 
 tf ASG
 

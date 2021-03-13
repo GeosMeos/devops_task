@@ -135,6 +135,31 @@ resource "aws_security_group" "ssh-access" {
   }
 }
 
+// Security groups
+resource "aws_security_group" "web-access" {
+  name        = "${var.environment}-sg"
+  description = "web (port 80) access"
+  vpc_id      = aws_vpc.vpc.id
+  depends_on  = [aws_vpc.vpc]
+  ingress {
+    from_port   = "80"
+    to_port     = "80"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = "0"
+    to_port     = "0"
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Environment = var.environment
+    Name        = "${var.environment}-sg-web"
+  }
+}
+
 // EC2 instance - LAMP
 resource "aws_instance" "lamp" {
   count                  = length(var.public_subnets_cidr)
@@ -142,11 +167,23 @@ resource "aws_instance" "lamp" {
   instance_type          = var.instance_type
   key_name               = var.key_name
   subnet_id              = element(aws_subnet.public_subnet.*.id, count.index)
-  vpc_security_group_ids = ["${aws_security_group.ssh-access.id}"]
+  vpc_security_group_ids = [aws_security_group.ssh-access.id, aws_security_group.web-access.id]
   tags = {
     Name        = "${var.environment}-lamp"
     Environment = var.environment
   }
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} >> ../ansible/hosts"
+  }
+  /*
+  provisioner "local-exec" {
+    command = <<EOF
+    sleep 120;
+    ssh -o StrictHostKeyChecking=no -i ${var.key_path} ubuntu@${aws_instance.lamp.*.public_ip} sudo apt-get install python -y;
+    ansible-playbook -i ansible/hosts ansible/roles/lamp.yaml
+    EOF
+  }
+*/
 }
 
 // EC2 instance - Windows Server 2019
@@ -156,10 +193,9 @@ resource "aws_instance" "win_server_2019" {
   key_name               = var.key_name
   get_password_data      = true
   subnet_id              = aws_subnet.public_subnet[0].id
-  vpc_security_group_ids = ["${aws_security_group.ssh-access.id}"]
+  vpc_security_group_ids = [aws_security_group.ssh-access.id]
   tags = {
     Name        = "${var.environment}-win_server_2019"
     Environment = var.environment
   }
 }
-

@@ -14,5 +14,5 @@ output "windows_public_ip" {
 }
 
 output "Administrator_Password" {
-  value = rsadecrypt(aws_instance.win_server_2019.password_data, file("D:\\PythonProjects\\devops_task\\testing-keypair.pem"))
+  value = rsadecrypt(aws_instance.win_server_2019.password_data, file(var.key_path))
 }

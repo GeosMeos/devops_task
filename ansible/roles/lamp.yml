@@ -1,0 +1,9 @@
+- name: install LAMP Stack
+  hosts: lampstack
+  remote_user: ubuntu
+  become: true
+  become_user: root
+  gather_facts: true
+
+- name: Include Apache
+  import_playbook: apache.yaml
