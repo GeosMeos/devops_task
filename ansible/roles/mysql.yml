@@ -3,6 +3,7 @@
   hosts: lampstack
   become: True
   become_user: root
+  gather_facts: True
   vars_files:
     - ../vars/default.yml
   tasks:
@@ -33,7 +34,6 @@
         - 127.0.0.1
         - localhost
         - ::1
-        - ""
   
     - name: Removes the MySQL test database
       mysql_db: db=test state=absent login_password="" login_user=root
@@ -50,5 +50,5 @@
         login_user: root
         login_password: ""
         name: wpuser
-        password: wpuser_password_replace_with_your_own
+        password: "{{MySQL_root_pass}}"
         priv: 'wordpress.*:ALL'

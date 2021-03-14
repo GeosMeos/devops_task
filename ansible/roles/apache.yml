@@ -1,5 +1,5 @@
 - name: install apache2
-  remote_user: ubuntu
+  user: ubuntu
   hosts: lampstack
   become: True
   become_user: root
