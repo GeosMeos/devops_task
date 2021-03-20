@@ -17,9 +17,9 @@
 
     - name: Generate password for logviewer
       set_fact:
-        logviewer_password: "{{ lookup('password', '{{SERVER_output_file}} length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
+        logviewer_pw: "{{ lookup('password', '{{logviewer_password}} length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
 
     - name: Create local user
       ansible.windows.win_user:
         name: logviewer
-        password: "{{logviewer_password}}"
+        password: "{{logviewer_pw}}"

@@ -237,7 +237,7 @@ resource "aws_instance" "win_server_2019" {
   }
 
   provisioner "local-exec" {
-    command = "echo '${rsadecrypt(self.password_data, file(var.key_path))}' >> ../outputs/winserver"
+    command = "echo '${rsadecrypt(self.password_data, file(var.key_path))}' >> ../outputs/Administrator_password"
   }
   tags = {
     Name        = "${var.environment}-win_server_2019"

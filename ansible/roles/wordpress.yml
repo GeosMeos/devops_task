@@ -28,6 +28,10 @@
     - name: Copy sample config file
       command: mv /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php
 
+    - name: fetch password for mysql
+      set_fact:
+        MYSQL_PASSWORD: "{{ lookup('password', '{{mysql_password}} length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
+
     - name: Update Wordpress config file
       lineinfile:
         path: /var/www/wordpress/wp-config.php
@@ -36,7 +40,7 @@
       with_items:
         - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', 'wordpress' );"}
         - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', 'wpuser' );"}
-        - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{MySQL_root_pass}}' );"}
+        - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{MYSQL_PASSWORD}}' );"}
         - {'regexp': "define\\( 'WP_DEBUG_LOG', '(.)+' \\);", 'line': "define( 'WP_DEBUG_LOG', 'true' );"}
         - {'regexp': "define\\( 'WP_DEBUG', '(.)+' \\);", 'line': "define( 'WP_DEBUG', 'true' );"}
 

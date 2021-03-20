@@ -50,5 +50,5 @@
         login_user: root
         login_password: ""
         name: wpuser
-        password: "{{MySQL_root_pass}}"
+        password: "{{ lookup('password', '{{mysql_password}} length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
         priv: 'wordpress.*:ALL'
