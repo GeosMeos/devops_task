@@ -41,7 +41,7 @@ tf lamp - OK
 
 tf winserver2019 - OK
 
-anisble lamp - 
+anisble lamp - OK
 
 ansible winserver2019
 

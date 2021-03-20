@@ -37,6 +37,20 @@
         - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', 'wordpress' );"}
         - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', 'wpuser' );"}
         - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{MySQL_root_pass}}' );"}
+        - {'regexp': "define\\( 'WP_DEBUG_LOG', '(.)+' \\);", 'line': "define( 'WP_DEBUG_LOG', 'true' );"}
+        - {'regexp': "define\\( 'WP_DEBUG', '(.)+' \\);", 'line': "define( 'WP_DEBUG', 'true' );"}
+
+    - name: download and unzip redirection
+      ansible.builtin.unarchive:
+        src: https://downloads.wordpress.org/plugin/redirection.zip
+        dest: /var/www/wordpress/wp-content/plugins
+        remote_src: yes
+
+    - name: download and unzip printfriendly
+      ansible.builtin.unarchive:
+        src: https://downloads.wordpress.org/plugin/printfriendly.zip
+        dest: /var/www/wordpress/wp-content/plugins
+        remote_src: yes
 
     - name: Update ownership to Apache user
       file:

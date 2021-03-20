@@ -135,7 +135,6 @@ resource "aws_security_group" "ssh-access" {
   }
 }
 
-// Security groups
 resource "aws_security_group" "web-access" {
   name        = "${var.environment}-sg-web"
   description = "web (port 80) access"
@@ -160,6 +159,45 @@ resource "aws_security_group" "web-access" {
   }
 }
 
+resource "aws_security_group" "winrm-access" {
+  name        = "${var.environment}-sg-winrm"
+  description = "winrm (ports 5985 5986) access"
+  vpc_id      = aws_vpc.vpc.id
+  depends_on  = [aws_vpc.vpc]
+  ingress {
+    from_port   = "5985"
+    to_port     = "5985"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = "5986"
+    to_port     = "5986"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = "3389"
+    to_port     = "3389"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = "0"
+    to_port     = "0"
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Environment = var.environment
+    Name        = "${var.environment}-sg-winrm"
+  }
+}
+
+
 // EC2 instance - LAMP
 resource "aws_instance" "lamp" {
   count                  = length(var.public_subnets_cidr)
@@ -173,17 +211,8 @@ resource "aws_instance" "lamp" {
     Environment = var.environment
   }
   provisioner "local-exec" {
-    command = "echo ${self.public_ip} >> ../ansible/hosts"
+    command = "echo ${self.public_ip} >> ../ansible/lamp"
   }
-  /*
-  provisioner "local-exec" {
-    command = <<EOF
-    sleep 120;
-    ssh -o StrictHostKeyChecking=no -i ${var.key_path} ubuntu@${aws_instance.lamp.*.public_ip} sudo apt-get install python -y;
-    ansible-playbook -i ansible/hosts ansible/roles/lamp.yaml
-    EOF
-  }
-*/
 }
 
 // EC2 instance - Windows Server 2019
@@ -193,7 +222,23 @@ resource "aws_instance" "win_server_2019" {
   key_name               = var.key_name
   get_password_data      = true
   subnet_id              = aws_subnet.public_subnet[0].id
-  vpc_security_group_ids = [aws_security_group.ssh-access.id]
+  vpc_security_group_ids = [aws_security_group.ssh-access.id, aws_security_group.winrm-access.id]
+  user_data              = <<EOF
+  <powershell>
+  $url = "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+  $file = "$env:temp\ConfigureRemotingForAnsible.ps1"
+  (New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
+  powershell.exe -ExecutionPolicy ByPass -File $file
+  </powershell>
+  EOF
+
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} >> ../ansible/winserver"
+  }
+
+  provisioner "local-exec" {
+    command = "echo '${rsadecrypt(self.password_data, file(var.key_path))}' >> ../outputs/winserver"
+  }
   tags = {
     Name        = "${var.environment}-win_server_2019"
     Environment = var.environment

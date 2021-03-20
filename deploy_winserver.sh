@@ -1,0 +1,1 @@
+ansible-playbook  ansible/roles/winserver.yml -i ansible/winserver

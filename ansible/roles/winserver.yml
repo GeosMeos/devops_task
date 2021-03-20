@@ -1,0 +1,25 @@
+- name: Windows server 2019 realted configuration
+  hosts: winserver2019
+  remote_user: Administrator
+  gather_facts: true
+  vars_files:
+    - ../vars/default.yml
+  tasks:
+    - name: Install IIS 
+      ansible.windows.win_feature:
+        name: Web-Server
+        state: present
+
+    - name: Install dotnet 4 
+      ansible.windows.win_feature:
+        name: NET-Framework-45-Core
+        state: present
+
+    - name: Generate password for logviewer
+      set_fact:
+        logviewer_password: "{{ lookup('password', '{{SERVER_output_file}} length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
+
+    - name: Create local user
+      ansible.windows.win_user:
+        name: logviewer
+        password: "{{logviewer_password}}"

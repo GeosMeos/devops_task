@@ -4,13 +4,7 @@
   become: True
   become_user: root
   gather_facts: True
-  tasks: 
-    - name: "remove existing php7.2"
-      package: name=php7.2 state=absent
-
-    - name: "disable php 7.2 mod"
-      ansible.builtin.shell: a2dismod php7.2
-
+  tasks:
     - name: "Install software-properties-common"
       package: name=software-properties-common state=present
   
@@ -53,5 +47,3 @@
     - name: "Install php7.4-tokenizer"
       package: name=php7.4-tokenizer state=present
 
-    - name: "enable php 7.4 mod"
-      ansible.builtin.shell: a2dismod php7.4
