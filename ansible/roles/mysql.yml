@@ -27,6 +27,7 @@
     - name: Deletes anonymous MySQL server user for localhost
       mysql_user: user="" state="absent" login_password="" login_user=root
       no_log: true
+      failed_when: false
 
     - name: Secures the MySQL root user
       mysql_user: user="root" password="" host="{{item}}" login_password="" login_user=root

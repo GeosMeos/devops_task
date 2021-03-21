@@ -1,4 +1,4 @@
-- name: Install MySQL for production ready server
+- name: Install samba
   user: ubuntu
   hosts: lampstack
   become: True
@@ -10,4 +10,3 @@
         name: samba
         state: present
         update_cache: yes
-    

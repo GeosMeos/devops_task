@@ -59,7 +59,7 @@ ToDo:
 
 ## HowTo:
 
-1. install ansible(python and pip also), terraform.
+1. install ansible(python and pip also), terraform, pywinrm(via pip)
 
 2. create aws account, create iam user with AmazonEC2FullAccess and NetworkAdministrator and generate access key.
 

@@ -10,3 +10,8 @@
 
     - name: "Install unzip"
       package: name=unzip state=present
+
+    - name: create logs dir
+      ansible.builtin.file:
+        path: /var/log/wordpress
+        state: present

@@ -41,8 +41,8 @@
         - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', 'wordpress' );"}
         - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', 'wpuser' );"}
         - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{MYSQL_PASSWORD}}' );"}
-        - {'regexp': "define\\( 'WP_DEBUG_LOG', '(.)+' \\);", 'line': "define( 'WP_DEBUG_LOG', 'true' );"}
-        - {'regexp': "define\\( 'WP_DEBUG', '(.)+' \\);", 'line': "define( 'WP_DEBUG', 'true' );"}
+        - {'regexp': "define\\( 'WP_DEBUG_LOG', '(.)+' \\);", 'line': "define( 'WP_DEBUG_LOG', '/var/log/wordpress' );"}
+        - {'regexp': "define\\( 'WP_DEBUG', '(.)+' \\);", 'line': "define( 'WP_DEBUG', true );"}
 
     - name: download and unzip redirection
       ansible.builtin.unarchive:
