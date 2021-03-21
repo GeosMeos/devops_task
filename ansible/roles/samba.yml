@@ -4,9 +4,44 @@
   become: True
   become_user: root
   gather_facts: True
+  vars_files:
+    - ../vars/default.yml
   tasks:
-    - name: "Install samba"
+    - name: Install samba
       apt:
         name: samba
         state: present
         update_cache: yes
+
+    - name: Copy config file
+      copy:
+        src: ../templates/smb.conf
+        dest: /etc/smb.conf
+
+    - name: fetch password for logviewer
+      set_fact:
+        logviewer_pw: "{{ lookup('password', '{{logviewer_password}} length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
+
+    - name: Create logviewers group
+      ansible.builtin.group:
+        name: logviewers
+        state: present
+
+    - name: Create logviewer user
+      user:
+        name: logviewer 
+        password: "{{ logviewer_pw | password_hash('sha512') }}"
+        create_home: no
+        groups: logviewers
+
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: /var/log/wordpress
+        owner: root
+        group: logviewers
+        mode: '0770'
+
+    - name: Restart service smbd
+      ansible.builtin.service:
+        name: smbd
+        state: restarted
