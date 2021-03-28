@@ -14,4 +14,4 @@
     - name: create logs dir
       ansible.builtin.file:
         path: /var/log/wordpress
-        state: present
+        state: directory

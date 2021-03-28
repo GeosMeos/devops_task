@@ -5,21 +5,47 @@
   vars_files:
     - ../vars/default.yml
   tasks:
-    - name: Install IIS 
+    - name: Install IIS
       ansible.windows.win_feature:
         name: Web-Server
         state: present
 
-    - name: Install dotnet 4 
+    - name: Install dotnet 4
       ansible.windows.win_feature:
         name: NET-Framework-45-Core
         state: present
 
     - name: Generate password for logviewer
       set_fact:
-        logviewer_pw: "{{ lookup('password', '{{logviewer_password}} length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
+        logviewer_pw: "{{ lookup('password', '{{ logviewer_password }} length=15 chars=ascii_letters,digits,hexdigits,punctuation') }}"
 
     - name: Create local user
       ansible.windows.win_user:
         name: logviewer
-        password: "{{logviewer_pw}}"
+        password: "{{ logviewer_pw }}"
+
+    - name: Add a local user to a local group
+      ansible.windows.win_group_membership:
+        name: Remote Desktop Users
+        members:
+          - logviewer
+        state: present
+
+    - name: Allow file and printer sharing for SMB
+      win_command: netsh advfirewall firewall set rule group="File and Printer Sharing" new enable=Yes
+
+    - name: Allow network discovery for SMB
+      win_command: netsh advfirewall firewall set rule group="Network Discovery" new enable=Yes
+
+    - name: Allow local guest login for smb share
+      win_command: reg add HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters /v AllowInsecureGuestAuth /t reg_dword /d 00000001 /f
+    # broken
+    - name: create mapped drive with local credentials
+      win_mapped_drive:
+        letter: L
+        path: \\{{ logs_ip }}\WP_LOGS\
+        username: logviewer
+        password: "{{ logviewer_pw }}"
+      become: yes
+      become_method: runas
+      become_user: logviewer

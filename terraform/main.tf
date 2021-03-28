@@ -198,6 +198,52 @@ resource "aws_security_group" "winrm-access" {
 }
 
 
+resource "aws_security_group" "smb-access" {
+  name        = "${var.environment}-sg-smb"
+  description = "smb (137-139) access"
+  vpc_id      = aws_vpc.vpc.id
+  depends_on  = [aws_vpc.vpc]
+  ingress {
+    from_port   = "137"
+    to_port     = "137"
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.vpc.cidr_block]
+  }
+
+  ingress {
+    from_port   = "138"
+    to_port     = "138"
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.vpc.cidr_block]
+  }
+
+  ingress {
+    from_port   = "139"
+    to_port     = "139"
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.vpc.cidr_block]
+  }
+
+  ingress {
+    from_port   = "445"
+    to_port     = "445"
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.vpc.cidr_block]
+  }
+
+  egress {
+    from_port   = "0"
+    to_port     = "0"
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Environment = var.environment
+    Name        = "${var.environment}-sg-smb"
+  }
+}
+
+
 // EC2 instance - LAMP
 resource "aws_instance" "lamp" {
   count                  = length(var.public_subnets_cidr)
@@ -205,13 +251,16 @@ resource "aws_instance" "lamp" {
   instance_type          = var.instance_type
   key_name               = var.key_name
   subnet_id              = element(aws_subnet.public_subnet.*.id, count.index)
-  vpc_security_group_ids = [aws_security_group.ssh-access.id, aws_security_group.web-access.id]
+  vpc_security_group_ids = [aws_security_group.ssh-access.id, aws_security_group.web-access.id, aws_security_group.smb-access.id]
   tags = {
     Name        = "${var.environment}-lamp"
     Environment = var.environment
   }
   provisioner "local-exec" {
     command = "echo ${self.public_ip} >> ../ansible/lamp"
+  }
+    provisioner "local-exec" {
+    command = "echo ${self.private_ip} >> ../ansible/logs"
   }
 }
 

@@ -13,10 +13,16 @@
         state: present
         update_cache: yes
 
-    - name: Copy config file
-      copy:
-        src: ../templates/smb.conf
-        dest: /etc/smb.conf
+    - name: update smb.conf
+      blockinfile:
+        path: /etc/samba/smb.conf
+        block: |
+          [WP_LOGS]
+          path = /var/log/wordpress
+          valid users = logviewer @logviewers
+          browsable = yes
+          writable = yes
+          read only = yes
 
     - name: fetch password for logviewer
       set_fact:
@@ -40,6 +46,10 @@
         owner: root
         group: logviewers
         mode: '0770'
+    
+    - name: Configure Samba user(via smbpasswd)
+      shell: "printf '{{ logviewer_pw }}\n{{ logviewer_pw }}\n' | smbpasswd -s -a logviewer"
+      register: smbpasswd
 
     - name: Restart service smbd
       ansible.builtin.service:
