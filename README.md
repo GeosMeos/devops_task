@@ -15,12 +15,12 @@ Using tf and ansible, configure and dploy on AWS in us-east-1 via t3.small insta
     * IIS - V
     * DotNet 4 latest - V
     * local user "logviewer" with auto-generated password - V
-    * SMB share to LAMP machine
+    * SMB share to LAMP machine - X
 
 Concepts:
-* Load balancer
-* Auto scaling
-* Security (SGs)
+* Load balancer - OK
+* Auto scaling - X
+* Security (SGs) - OK
 * What happens in scaling? how would the environment react?
 
 
@@ -45,27 +45,27 @@ ToDo:
 
 * ansible winserver2019 - OK
 
-* ansible SMB share
+* ansible SMB share -X
 
-* tf ASG
+* tf ELB - OK
 
-* tf ALB
+* questions - OK
 
-* questions
-
-* documentation
+* documentation - OK
 
 
 
 ## HowTo:
 
-1. install ansible(python and pip also), terraform, pywinrm(via pip)
+1. install ansible(python and pip also), terraform, pywinrm(via pip) and awscli
 
 2. create aws account, create iam user with AmazonEC2FullAccess and NetworkAdministrator and generate access key.
 
-3. create key-pair and save the .pem file to ~/.ssh/
+3. configure awscli
 
-4. create terraform/terraform.tfvars with:
+4. create key-pair and save the .pem file to ~/.ssh/
+
+5. create terraform/terraform.tfvars with:
 ```
 # VPC realted
 region = "us-east-1"
@@ -80,6 +80,7 @@ win_ami_id = "ami-02642c139a9dfb378"
 instance_type = "t3.small"
 key_name = "testing-keypair"
 key_path = "~/.ssh/testing-keypair.pem"
+number_of_instances = 1
 ```
 
 5. update provider.tf profile(if not using default)

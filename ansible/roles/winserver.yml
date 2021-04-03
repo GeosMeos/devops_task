@@ -39,13 +39,3 @@
 
     - name: Allow local guest login for smb share
       win_command: reg add HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters /v AllowInsecureGuestAuth /t reg_dword /d 00000001 /f
-    # broken
-    - name: create mapped drive with local credentials
-      win_mapped_drive:
-        letter: L
-        path: \\{{ logs_ip }}\WP_LOGS\
-        username: logviewer
-        password: "{{ logviewer_pw }}"
-      become: yes
-      become_method: runas
-      become_user: logviewer

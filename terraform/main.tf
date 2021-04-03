@@ -160,8 +160,8 @@ resource "aws_security_group" "web-access" {
 }
 
 resource "aws_security_group" "winrm-access" {
-  name        = "${var.environment}-sg-winrm"
-  description = "winrm (ports 5985 5986) access"
+  name        = "${var.environment}-sg-win"
+  description = "winrm (ports 5985 5986) and rdp(3389) access"
   vpc_id      = aws_vpc.vpc.id
   depends_on  = [aws_vpc.vpc]
   ingress {
@@ -246,11 +246,11 @@ resource "aws_security_group" "smb-access" {
 
 // EC2 instance - LAMP
 resource "aws_instance" "lamp" {
-  count                  = length(var.public_subnets_cidr)
+  count                  = var.number_of_instances
   ami                    = var.ami_id
   instance_type          = var.instance_type
   key_name               = var.key_name
-  subnet_id              = element(aws_subnet.public_subnet.*.id, count.index)
+  subnet_id              = aws_subnet.public_subnet[0].id
   vpc_security_group_ids = [aws_security_group.ssh-access.id, aws_security_group.web-access.id, aws_security_group.smb-access.id]
   tags = {
     Name        = "${var.environment}-lamp"
@@ -259,8 +259,11 @@ resource "aws_instance" "lamp" {
   provisioner "local-exec" {
     command = "echo ${self.public_ip} >> ../ansible/lamp"
   }
-    provisioner "local-exec" {
+  provisioner "local-exec" {
     command = "echo ${self.private_ip} >> ../ansible/logs"
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -271,7 +274,7 @@ resource "aws_instance" "win_server_2019" {
   key_name               = var.key_name
   get_password_data      = true
   subnet_id              = aws_subnet.public_subnet[0].id
-  vpc_security_group_ids = [aws_security_group.ssh-access.id, aws_security_group.winrm-access.id]
+  vpc_security_group_ids = [aws_security_group.winrm-access.id]
   user_data              = <<EOF
   <powershell>
   $url = "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
@@ -292,4 +295,37 @@ resource "aws_instance" "win_server_2019" {
     Name        = "${var.environment}-win_server_2019"
     Environment = var.environment
   }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Load balancer and stickiness policy
+resource "aws_elb" "lb" {
+  subnets                   = aws_subnet.public_subnet.*.id
+  security_groups           = [aws_security_group.web-access.id]
+  instances                 = aws_instance.lamp.*.id
+  cross_zone_load_balancing = true
+
+  listener {
+    instance_port     = 80
+    instance_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
+  }
+
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+    timeout             = 60
+    target              = "HTTP:80/"
+    interval            = 300
+  }
+}
+
+resource "aws_lb_cookie_stickiness_policy" "lb-stickiness" {
+  name                     = "lb-policy"
+  load_balancer            = aws_elb.lb.id
+  lb_port                  = 80
+  cookie_expiration_period = 600
 }

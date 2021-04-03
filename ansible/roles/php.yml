@@ -4,6 +4,8 @@
   become: True
   become_user: root
   gather_facts: True
+  vars_files:
+    - ../vars/default.yml
   tasks:
     - name: "Install software-properties-common"
       package: name=software-properties-common state=present
@@ -11,39 +13,39 @@
     - name: Add repository for PHP versions (Ubuntu).
       apt_repository: repo='ppa:ondrej/php'
 
-    - name: "Install php7.4"
-      package: name=php7.4 state=present
+    - name: "Install php {{PHP_VER}}"
+      package: name=php{{PHP_VER}} state=present
 
-    - name: "Install php7.4-common"
-      package: name=php7.4-common state=present
+    - name: "Install php{{PHP_VER}}-common"
+      package: name=php{{PHP_VER}}-common state=present
       
-    - name: "Install php7.4-mysql"
-      package: name=php7.4-mysql state=present
+    - name: "Install php{{PHP_VER}}-mysql"
+      package: name=php{{PHP_VER}}-mysql state=present
 
-    - name: "Install php7.4-curl"
-      package: name=php7.4-curl state=present
+    - name: "Install php{{PHP_VER}}-curl"
+      package: name=php{{PHP_VER}}-curl state=present
 
-    - name: "Install php7.4-json"
-      package: name=php7.4-json state=present
+    - name: "Install php{{PHP_VER}}-json"
+      package: name=php{{PHP_VER}}-json state=present
 
-    - name: "Install php7.4-mbstring"
-      package: name=php7.4-mbstring state=present
+    - name: "Install php{{PHP_VER}}-mbstring"
+      package: name=php{{PHP_VER}}-mbstring state=present
 
-    - name: "Install php7.4-xml"
-      package: name=php7.4-xml state=present
+    - name: "Install php{{PHP_VER}}-xml"
+      package: name=php{{PHP_VER}}-xml state=present
 
-    - name: Install php7.4-zip"
-      package: name=php7.4-zip state=present
+    - name: Install php{{PHP_VER}}-zip"
+      package: name=php{{PHP_VER}}-zip state=present
 
-    - name: "Install php7.4-gd"
-      package: name=php7.4-gd state=present
+    - name: "Install php{{PHP_VER}}-gd"
+      package: name=php{{PHP_VER}}-gd state=present
 
-    - name: "Install php7.4-soap"
-      package: name=php7.4-soap state=present
+    - name: "Install php{{PHP_VER}}-soap"
+      package: name=php{{PHP_VER}}-soap state=present
 
-    - name: "Install php7.4-ssh2"
-      package: name=php7.4-ssh2 state=present
+    - name: "Install php{{PHP_VER}}-ssh2"
+      package: name=php{{PHP_VER}}-ssh2 state=present
 
-    - name: "Install php7.4-tokenizer"
-      package: name=php7.4-tokenizer state=present
+    - name: "Install php{{PHP_VER}}-tokenizer"
+      package: name=php{{PHP_VER}}-tokenizer state=present
 

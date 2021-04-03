@@ -39,3 +39,8 @@ variable "key_name" {
 variable "key_path" {
   description = "The key-pair to use for ssh"
 }
+
+variable "number_of_instances" {
+  description = "number of lamp instances to create"
+}
+
