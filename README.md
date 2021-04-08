@@ -10,7 +10,7 @@
 
 - Install  ansible.windows collaction via `ansible-galaxy collection install ansible.windows`[https://galaxy.ansible.com/ansible/windows]
 
-Steps:
+## Steps:
 
 1. Clone this repository
 
@@ -56,7 +56,7 @@ ansible_ssh_user= ubuntu
 inventory = ./hosts
 ```
 
-5. run `cd terraform && terraform apply` and approve the plan (y).
+5. run `cd terraform && terraform init && terraform apply` and approve the plan (y).
 
 6. Once terraform is complete, edit the file via `nano ../ansible/winserver` and add update `ansible_password` with the output Administrator_password (if the output is lost, you can check out `../output/Administrator_password`) 
 
@@ -71,8 +71,6 @@ inventory = ./hosts
 11. Complete the WordPress installation, log in and navigate to plugins, you should see `printfriendly` and `redirection` installed.
 
 12. connect via rdp (remmina for linux) to the public ip of the winserver with `logviewer` as username and the password from `outputs/logviewer_password`, copy `ansible/logs` private ip and navigate to `\\<private ip>\wp_logs`, log files will be created here. You can verify smb share works by connecting to the lamp machine and creating a file in `/var/log/wordpress/`
-
-
 
 
 ## Known issues
