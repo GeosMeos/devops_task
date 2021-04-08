@@ -1,7 +1,0 @@
-# administration: 
-mysql_password: "../../outputs/mysql_password"
-logviewer_password: "../../outputs/logviewer_password"
-logs_ip: ../logs
-# versions:
-SQL_VER: "5.7"
-PHP_VER: "7.4"
