@@ -1,21 +1,22 @@
 ## Requirements:
 
-1. Install Terraform[https://learn.hashicorp.com/tutorials/terraform/install-cli]
+- Install Terraform[https://learn.hashicorp.com/tutorials/terraform/install-cli]
 
-2. Install Ansible[https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#prerequisites-installing-pip]
+- Install Ansible[https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#prerequisites-installing-pip]
 
-3. awscli[https://docs.aws.amazon.com/cli/latest/userguide/install-linux.html] and configure it with an access key, with `AmazonEC2FullAccess` and `NetworkAdministrator` policies.
+- awscli[https://docs.aws.amazon.com/cli/latest/userguide/install-linux.html] and configure it with an access key, with `AmazonEC2FullAccess` and `NetworkAdministrator` policies.
 
-4. Install pywinrm[https://pypi.org/project/pywinrm/]
+- Install pywinrm[https://pypi.org/project/pywinrm/]
 
+- Install  ansible.windows collaction via `ansible-galaxy collection install ansible.windows`[https://galaxy.ansible.com/ansible/windows]
 
 Steps:
 
-- Clone this repository
+1. Clone this repository
 
-- Using aws console, create key-pair and save it in `~/.ssh/<key-pair-name>.pem`
+2. Using aws console, create key-pair and save it in `~/.ssh/<key-pair-name>.pem`, make sure to change permissions via ` sudo chmod 400 ~/.ssh/<key-pair-name>.pem`.
 
-- create `terraform/terraform.tfvars` with the following configuration:
+3. create `terraform/terraform.tfvars` with the following configuration:
 
 ```
 ## VPC realted
@@ -41,7 +42,8 @@ key_name = "<key-pair-name>"
 key_path = "~/.ssh/<key-pair-name>.pem"
 ```
 
-- update ansible/ansible.cfg with parameters:
+
+4. update `ansible/ansible.cfg` with parameters:
 
 ```
 [defaults]
@@ -54,3 +56,22 @@ ansible_ssh_user= ubuntu
 inventory = ./hosts
 ```
 
+5. run `cd terraform && terraform apply` and approve the plan (y).
+
+6. Once terraform is complete, edit the file via `nano ../ansible/winserver` and add update `ansible_password` with the output Administrator_password (if the output is lost, you can check out `../output/Administrator_password`) 
+
+7. navigate back to project root and modify permissions on the scripts via `sudo chmod +x deploy_lamp.sh deploy_winserver.sh`
+
+8. run `./deploy_lamp.sh`
+
+9. run  `./deploy_winserver.sh`
+
+10. via browser navigate to the `lb_dns_name` (terraform outputs), you should get a install page for WordPress.
+
+11. connect via rdp (remmina for linux) to the public ip of the winserver with `logviewer` as username and the password from `outputs/logviewer_password`, copy `ansible/logs` private ip and navigate to `\\<private ip>\wp_logs`, log files will be created here. You can verify smb share works by connecting to the lamp machine and creating a file in `/var/log/wordpress/`
+
+
+## Known issues
+
+- smb share is not created automatically on the logviewer user.
+- load balancer is flaky, sometimes it needs a moment.

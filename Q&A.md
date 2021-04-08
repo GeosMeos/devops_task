@@ -2,8 +2,12 @@ Q: How can we secure the system from intrusion and attack, internal and external
 ```
 A: There are multiple ways, first i'd remove external access to resources and set up a bastion inside the vpc,
 this will ensure only valid users who have the relevant ssh key-pair has access.
-Additionally i'd  set up a WAF before the load balancer to monitor and prevent external attacks.
+
+To secure external access, set up a WAF before the load balancer to monitor and prevent external attacks.
+
 Internally, i'd limit traffic between instances to specific security group.
+
+A secret manager(like vault) to keep secrets outside the code.
 ```
 Q: How can we address the log collection in case we need to scale the deployment
 horizontally to multiple machines?
