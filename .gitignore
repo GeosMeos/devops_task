@@ -35,4 +35,4 @@ terraform.rc
 *.pem
 *.ppk
 ansible/vars/default.yml
-#outputs/*
+outputs/*
