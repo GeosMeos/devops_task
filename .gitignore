@@ -34,5 +34,9 @@ override.tf.json
 terraform.rc
 *.pem
 *.ppk
+# sensitive files
 ansible/vars/default.yml
 outputs/*
+ansible/lamp
+ansible/logs
+ansible/winserver
