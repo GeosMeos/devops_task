@@ -72,9 +72,20 @@ inventory = ./hosts
 
 12. connect via rdp (remmina for linux) to the public ip of the winserver with `logviewer` as username and the password from `outputs/logviewer_password`, copy `ansible/logs` private ip and navigate to `\\<private ip>\wp_logs`, log files will be created here. You can verify smb share works by connecting to the lamp machine and creating a file in `/var/log/wordpress/`
 
+## Configuration
+
+- cloud resources can be configured via `terraform/terraform.tfvars`.
+
+- php and mysql versions can be configured in `ansible/vars/default.yml`
+
 
 ## Known issues
 
 - smb share is not created automatically on the logviewer user.
 - load balancer is flaky, sometimes it needs a moment.
 - since logviewer password is auto generated occasionally it will be generated with characters that smbpasswd doesn't like.
+
+
+## Outputs
+
+- passwords will be created in `outputs` directory.
