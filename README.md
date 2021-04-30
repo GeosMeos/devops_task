@@ -1,8 +1,8 @@
 ## Requirements:
 
-- Install Terraform[https://learn.hashicorp.com/tutorials/terraform/install-cli]
+- Install Terraform[https://learn.hashicorp.com/tutorials/terraform/install-cli] Version >= 0.14.3
 
-- Install Ansible[https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#prerequisites-installing-pip]
+- Install Ansible[https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#prerequisites-installing-pip] Version >= 2.9.18
 
 - awscli[https://docs.aws.amazon.com/cli/latest/userguide/install-linux.html] and configure it with an access key, with `AmazonEC2FullAccess` and `NetworkAdministrator` policies.
 
